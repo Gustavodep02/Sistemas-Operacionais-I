@@ -44,8 +44,11 @@ public class RedesController {
 				BufferedReader buffer = new BufferedReader(leitor);
 				String linha = buffer.readLine();
 				while(linha !=null) {
-					System.out.println(linha);
-					linha = buffer.readLine();
+					if(linha.contains("inet" )|| linha.contains("inet6")) {
+						System.out.println(linha);
+					}
+						linha = buffer.readLine();
+					
 				}
 				buffer.close();
 				leitor.close();
@@ -57,6 +60,34 @@ public class RedesController {
 		}
 	}
 	public void Ping() {
-		
+		String os = Os();
+		String processo = "ping -4 -c 10 www.google.com.br";
+		if(os.contains("Windows")) {
+			processo = "ping -4 -n 10 www.google.com.br";
+		}
+		Process ping;
+			try {
+				ping =Runtime.getRuntime().exec(processo);
+				InputStream fluxo = ping.getInputStream();
+				InputStreamReader leitor = new InputStreamReader(fluxo);
+				BufferedReader buffer = new BufferedReader(leitor);
+				String linha;
+				String ultima = "";
+	            while ((linha = buffer.readLine()) != null) {
+	                ultima = linha;
+	            }
+	            buffer.close();
+	            leitor.close();
+	            fluxo.close();
+	            if (os.contains("Windows")) {
+	                String[] split = ultima.split(" = ");
+	                System.out.println("Média = " + split[split.length - 1]);
+	            } else {
+	                String[] split = ultima.split("/");
+	                System.out.println("Média = " + split[split.length - 3]);
+	            }
+	        } catch (Exception e) {
+	            System.out.println(e.getMessage());
+		}
 	}
 }
